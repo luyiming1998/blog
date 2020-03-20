@@ -1,0 +1,40 @@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">BLOG</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/index.html">首页 <span class="sr-only">(current)</span></a></li>
+                <li><a href="#">Link</a></li>
+            </ul>
+            {% if request.session.userinfo %}
+                <div class="nav navbar-nav navbar-right">
+                    <div style="line-height: 50px">
+                        <a href="/uindex/{{ request.session.userinfo.0.user_id }}">{{ request.session.userinfo.0.username }}</a> ·
+                        <a href="/show_my_article/">我的博客</a> ·
+                        <a href="/pub_article/">发表</a>·
+                        <a href="/logout/">退出</a>
+                    </div>
+                </div>
+            {% else %}
+                <form action="/login.html" method="post" class="form-inline nav navbar-nav navbar-right">
+                {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <input type="text" name="username" class="form-control" id="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <input type="password" name="password" class="form-control" id="password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">登录</button>
+                    <a href="/regist.html" class="btn btn-default">注册</a>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</nav>

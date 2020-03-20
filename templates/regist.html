@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/plugin/bootstrap-3.3.7-dist/css/bootstrap.css">
+</head>
+<body style="background-color: #eee">
+{% include 'header.html' %}
+<div style="width: 600px;height: 600px;margin: 0 auto ;background-color: white;padding: 50px">
+        <h1 align="center">创建一个用户</h1>
+    <form action="/regist.html" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_username">用户名</label>
+            {{ form.username }}
+            {{ form.errors.username.0 }}
+        </div>
+        <div class="form-group">
+            <label for="id_email">邮箱</label>
+            {{ form.email}}{{ form.errors.email.0 }}
+        </div>
+        <div class="form-group">
+            <label for="id_url">个人博客网址</label>
+            {{ form.url}}{{ form.errors.url.0 }}
+        </div>
+        <div class="form-group">
+            <label for="id_password">密码</label>
+            {{ form.password}}{{ form.errors.password.0 }}
+
+        </div>
+        <div class="form-group"><label for="id_check_password">确认密码</label>
+            {{ form.check_password}}{{ form.errors.check_password.0 }}
+
+        </div>
+
+
+        <input type="submit" value="注册" class="btn btn-primary">
+        <input type="button" value="登录"  class="btn btn-default" onclick="tologin()">
+    </form>
+</div>
+<script src="/static/js/jquery.min.js"></script>
+<script>
+    function tologin() {
+        window.location.href = "login.html"
+    }
+</script>
+</body>
+</html>

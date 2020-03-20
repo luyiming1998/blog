@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/plugin/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <style>
+        pre {
+            display: block;
+            font-family: inherit;
+            white-space: pre-wrap;
+            white-space: -moz-pre-wrap;
+            white-space: -o-pre-wrap;
+            word-wrap: break-word;
+            padding: 0;
+            margin: 0 auto;
+            font-size: 15px;
+            line-height: inherit;
+            color: inherit;
+            word-break: break-all;
+            background-color: transparent;
+            border: none;
+            border-radius: 0;
+            width: 800px;
+        }
+    </style>
+</head>
+<body>
+{% include 'header.html' %}
+<h1 align="center">{{ article.title }}</h1>
+<p align="center">
+    作者:{{ article.uid__username }}发布时间:{{ article.create_date|date:"Y-m-d H:i:s" }}上一次更新:{{ article.last_updatetime |date:"Y-m-d H:i:s" }}</p>
+<hr>
+
+<pre>{{ article.article_content }}</pre>
+<hr>
+<div style="width: 700px; margin: 0 auto;margin-bottom: 50px">
+    <p style="color: red;font-size: 20px;margin-left: -75px">评论区</p>
+    {% for comment in comment_list %}
+        {% if comment.5 != None %}
+        {% endif %}
+        <div style="width:700px;">
+            <img src="/upload/{{ comment.6 }}" alt="" class="img-rounded pull-left" width="48px" height="48px"/>
+            <div style="padding-left: 68px">
+                <a class="pull-right" onclick="reply('{{ comment.0 }}','{{ comment.2 }}')">回复</a>
+                <p><a href="/uindex/{{ comment.1 }}"><strong>{{ comment.2 }}</strong></a> | <span style="color: darkgray">{{ comment.4|date:"Y-m-d H:i:s" }}</span>
+                </p>
+                <p>{{ comment.3 }}</p>
+            </div>
+        {% for reply in reply_list %}
+            {% if reply.5 == comment.0 %}
+                <div style="background-color: #eee;width: 632px;margin-left: 68px">
+                <div style="display: block;padding: 5px;width: 150px" class="pull-right">{{ reply.4|date:"Y-m-d H:i:s"}}</div>
+                <div style="display: block;padding: 5px;margin: 0;word-wrap:break-word;width: 500px"><a
+                        href="/uindex/{{ reply.1 }}">{{ reply.2 }}</a><span style="color: #2e6da4"> 回复：</span>{{ reply.3 }}</div>
+                </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <br>
+    {% endfor %}
+    {% if request.session.userinfo %}
+        <div class="form-group">
+            <label for="CommentInput">评论:</label>
+            <input type="hidden" name="reply_id" id="reply_id">
+            <textarea id="CommentInput" class="form-control"></textarea>
+        </div>
+        <input class="btn btn-primary" id="btn_submit" type="button" value="发表"/>
+    {% else %}
+        您还没有登录，前往<a href="/login.html">登录</a>或<a href="/regist.html">注册</a>
+    {% endif %}
+</div>
+
+
+<script src="/static/js/jquery.min.js"></script>
+<script>
+    function reply(id, name) {
+        console.log(id, name)
+        $("#CommentInput").val("@" + name + " ")
+        $("#reply_id").val(id)
+    }
+
+    $("#btn_submit").click(function () {
+        var user_id = '{{ request.session.userinfo.0.user_id }}'
+        var content = $('#CommentInput').val()
+        if (content[0] != "@") {
+            $("#reply_id").removeAttr("value")
+        }
+        var reply_id = $("#reply_id").val()
+        $.ajax({
+            url: "/post_comment/",
+            type: 'post',
+            dataType: 'json',
+            data: {
+                "article_id": '{{ article.article_id }}',
+                "user_id": user_id,
+                "reply_id": reply_id,
+                "content": content,
+                "csrfmiddlewaretoken": '{{csrf_token}}'
+            },
+            success: function (args) {
+                if (args.status) {
+                    location.reload()
+                } else {
+                    alert(args.message)
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>
